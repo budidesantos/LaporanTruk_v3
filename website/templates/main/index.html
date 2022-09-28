@@ -1,0 +1,84 @@
+{% extends "base.html" %} {% block title %}App Laporan Truk{% endblock %} 
+    {% block content %}
+    <h1 align="center">Laporan Truk Pabrik</h1>
+    <br>
+    <form class="form-inline justify-content-end" method="POST">
+      <div class="form-group mb-2">
+        <label for="btsbwh">Dari Tgl</label>&nbsp;
+        <input type="date" class="form-control-sm" name="bawah" id="bawah">&nbsp;
+      </div>
+      <div class="form-group mb-2">
+        <label for="btsatas">Sampai</label>&nbsp;
+        <input type="date" class="form-control-sm" name="atas" id="atas">&nbsp;
+      </div>
+      <div class="form-group mx-3 mb-2">
+        <button type="submit" class="btn btn-outline-info btn-sm">Filter</button>
+      </div>
+    </form>
+
+    <div class="table-responsive" >
+      <div id="table"></div>
+      <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+      <script>
+        
+        const tableDiv = document.getElementById('table');
+  
+        const updateUrl = (prev, query) => {
+          return prev + (prev.indexOf('?') >= 0 ? '&' : '?') + new URLSearchParams(query).toString();
+        };
+
+        new gridjs.Grid({
+          columns: [
+            { id: 'id', 'hidden': true },
+            { id: 'tgl_brgkt', name: 'Waktu Berangkat', formatter: (cell, row) => {
+            return gridjs.html('<a href="/pabrik/laporan/' + row.cells[0].data + '"target="_blank" rel="noopener noreferrer">' + cell + '</a>')}},
+            { id: 'tgl_kmbl', name: 'Waktu Kembali', formatter: (cell, row) => {
+            return gridjs.html('<a href="/pabrik/laporan/' + row.cells[0].data + '"target="_blank" rel="noopener noreferrer">' + cell + '</a>')}},
+            { id: 'nopol', name: 'Nopol', formatter: (cell, row) => {
+            return gridjs.html('<a href="/pabrik/laporan/' + row.cells[0].data + '"target="_blank" rel="noopener noreferrer">' + cell + '</a>')}},
+            { id: 'sopir', name: 'Sopir', formatter: (cell, row) => {
+            return gridjs.html('<a href="/pabrik/laporan/' + row.cells[0].data + '"target="_blank" rel="noopener noreferrer">' + cell + '</a>')}},
+            {id: 'km_awal', name: 'KM Berangkat', formatter: (cell, row) => {
+            return gridjs.html('<a href="/pabrik/laporan/' + row.cells[0].data + '"target="_blank" rel="noopener noreferrer">' + cell + '</a>')}},
+            {id: 'km_isi', name: 'KM Kembali', formatter: (cell, row) => {
+            return gridjs.html('<a href="/pabrik/laporan/' + row.cells[0].data + '"target="_blank" rel="noopener noreferrer">' + cell + '</a>')}},
+            { id: 'rate', name: 'Rate', formatter: (cell, row) => {
+            return gridjs.html('<a href="/pabrik/laporan/' + row.cells[0].data + '"target="_blank" rel="noopener noreferrer">' + cell + '</a>')}},
+            
+          ],
+          
+          server: {
+            url: '/api/data/pabrik',
+            then: results => results.data,
+            total: results => results.total,
+          },
+          style: { 
+            table: {
+              'min-width': '100%',
+              'autowidth': true,
+              'font-size': '15px',
+            },
+          },
+          search: {
+            enabled: true,
+            server: {
+              url: (prev, search) => {
+                return updateUrl(prev, {search});
+              },
+            },
+          },
+          
+          pagination: {
+            enabled: true,
+            server: {
+              url: (prev, page, limit) => {
+                return updateUrl(prev, {start: page * limit, length: limit});
+              },
+            },
+          },
+        }).render(tableDiv);
+  
+      </script>
+
+    </div>
+  {% endblock %}
